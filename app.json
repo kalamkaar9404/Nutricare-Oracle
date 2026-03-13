@@ -1,0 +1,13 @@
+{
+  "name": "NutriCareOracle",
+  "displayName": "NutriCare-Oracle",
+  "react-native": {
+    "project": {
+      "android": {
+        "sourceDir": "./android",
+        "appName": "app",
+        "packageName": "com.nutricareoracle"
+      }
+    }
+  }
+}
