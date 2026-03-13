@@ -21,7 +21,27 @@ import {
   Linking,
   Image,
   Easing,
+  LogBox,
 } from 'react-native';
+
+// Disable all LogBox notifications
+LogBox.ignoreAllLogs(true);
+
+// Suppress console warnings and errors for cleaner UI
+const originalWarn = console.warn;
+const originalError = console.error;
+console.warn = (...args) => {
+  // Only log in development, suppress in production
+  if (__DEV__) {
+    originalWarn(...args);
+  }
+};
+console.error = (...args) => {
+  // Only log in development, suppress in production
+  if (__DEV__) {
+    originalError(...args);
+  }
+};
 
 import { BarChart, ProgressChart } from 'react-native-chart-kit';
 import LinearGradient from 'react-native-linear-gradient';
@@ -1010,9 +1030,31 @@ function App(): React.JSX.Element {
   // Render Upload Tab
   const renderUploadTab = () => (
     <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
+      {/* Quick Stats Overview */}
+      {documents.length > 0 && (
+        <Animatable.View animation="fadeInDown" duration={600} delay={0}>
+          <View style={styles.statsOverview}>
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{documents.length}</Text>
+              <Text style={styles.statLabel}>Documents</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{healthScore || '--'}</Text>
+              <Text style={styles.statLabel}>Health Score</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>
+                {documents.filter(d => d.verified).length}
+              </Text>
+              <Text style={styles.statLabel}>Verified</Text>
+            </View>
+          </View>
+        </Animatable.View>
+      )}
+
       {/* Real-Time Health Score Dashboard */}
       {healthScore > 0 && (
-        <Animatable.View animation="fadeInDown" duration={600} delay={0}>
+        <Animatable.View animation="fadeInDown" duration={600} delay={50}>
           <View style={styles.healthScoreCard}>
             <LinearGradient colors={['#6366F1', '#8B5CF6', '#A855F7']} style={styles.healthScoreGradient}>
               <Text style={styles.healthScoreTitle}>Your Health Score</Text>
@@ -1157,117 +1199,57 @@ function App(): React.JSX.Element {
               }
             }}
             activeOpacity={0.8}>
-            <LinearGradient colors={['#F59E0B', '#D97706']} style={styles.demoGradient}>
+            <View style={styles.demoGradient}>
               <Text style={styles.demoButtonText}>Load Sample Data</Text>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
           
-          <View style={styles.uploadGrid}>
+          <View style={styles.compactUploadGrid}>
             <TouchableOpacity
-              style={styles.uploadOption}
+              style={styles.compactUploadOption}
               onPress={handleTakePhoto}
               activeOpacity={0.8}>
-              <LinearGradient colors={['#4CAF50', '#45a049', '#388E3C']} style={styles.uploadGradient}>
-                <Animated.View style={[styles.uploadIconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                  <IconCamera size={24} color="#ffffff" />
-                </Animated.View>
-                <Text style={styles.uploadOptionText}>Take Photo</Text>
-                <View style={styles.uploadShine} />
+              <LinearGradient colors={['#10B981', '#059669']} style={styles.compactUploadGradient}>
+                <View style={styles.compactIconCircle}>
+                  <IconCamera size={20} color="#ffffff" />
+                </View>
+                <Text style={styles.compactUploadText}>Photo</Text>
               </LinearGradient>
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={styles.uploadOption}
+              style={styles.compactUploadOption}
               onPress={handlePickFromGallery}
               activeOpacity={0.8}>
-              <LinearGradient colors={['#2196F3', '#1976D2', '#1565C0']} style={styles.uploadGradient}>
-                <Animated.View style={[styles.uploadIconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                  <IconGallery size={24} color="#ffffff" />
-                </Animated.View>
-                <Text style={styles.uploadOptionText}>Gallery</Text>
-                <View style={styles.uploadShine} />
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.uploadGrid}>
-            <TouchableOpacity
-              style={styles.uploadOption}
-              onPress={handlePickDocument}
-              activeOpacity={0.8}>
-              <LinearGradient colors={['#9C27B0', '#7B1FA2', '#6A1B9A']} style={styles.uploadGradient}>
-                <Animated.View style={[styles.uploadIconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                  <IconDocument size={24} color="#ffffff" />
-                </Animated.View>
-                <Text style={styles.uploadOptionText}>Browse Files</Text>
-                <View style={styles.uploadShine} />
+              <LinearGradient colors={['#3B82F6', '#2563EB']} style={styles.compactUploadGradient}>
+                <View style={styles.compactIconCircle}>
+                  <IconGallery size={20} color="#ffffff" />
+                </View>
+                <Text style={styles.compactUploadText}>Gallery</Text>
               </LinearGradient>
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={styles.uploadOption}
-              onPress={handleStartVoiceRecording}
+              style={styles.compactUploadOption}
+              onPress={handlePickDocument}
               activeOpacity={0.8}>
-              <LinearGradient colors={['#FF5722', '#E64A19', '#D84315']} style={styles.uploadGradient}>
-                <Animated.View style={[styles.uploadIconCircle, { transform: [{ scale: pulseAnim }] }]}>
-                  <IconMicrophone size={24} color="#ffffff" />
-                </Animated.View>
-                <Text style={styles.uploadOptionText}>Voice Input</Text>
-                <View style={styles.uploadShine} />
+              <LinearGradient colors={['#8B5CF6', '#7C3AED']} style={styles.compactUploadGradient}>
+                <View style={styles.compactIconCircle}>
+                  <IconDocument size={20} color="#ffffff" />
+                </View>
+                <Text style={styles.compactUploadText}>Files</Text>
               </LinearGradient>
             </TouchableOpacity>
-          </View>
-          
-          <View style={styles.uploadGrid}>
+            
             <TouchableOpacity
-              style={[styles.uploadOption, { flex: 1 }]}
-              onPress={async () => {
-                const name = 'Lab Report - ' + new Date().toLocaleDateString();
-                const content = 'Blood Glucose: 110 mg/dL\nVitamin D: 18 ng/mL\nCholesterol: 145 mg/dL\nHemoglobin: 12.5 g/dL';
-                
-                setIsLoading(true);
-                setLoadingMessage('Processing document');
-                
-                try {
-                  const metrics = extractMetrics(content);
-                  const fullContent = `Medical Report: ${name}\n\n${content}`;
-                  const hash = PrivacyService.generateHash({ content: fullContent, name });
-                  
-                  const doc: UploadedDocument = {
-                    name,
-                    content: fullContent,
-                    hash,
-                    timestamp: new Date(),
-                    verified: false,
-                    metrics
-                  };
-                  
-                  setLoadingMessage('Anchoring to blockchain');
-                  await BlockchainService.anchorHash(hash);
-                  doc.verified = true;
-                  
-                  setDocuments([...documents, doc]);
-                  setSelectedDoc(doc);
-                  
-                  // Update health score and show confetti
-                  updateHealthScore(metrics);
-                  setConfettiVisible(true);
-                  setTimeout(() => setConfettiVisible(false), 3000);
-                  
-                  Alert.alert('Success', `Document uploaded with ${Object.keys(metrics).length} metrics`);
-                } catch (error) {
-                  console.error('Upload error:', error);
-                  Alert.alert('Error', 'Failed to upload document');
-                } finally {
-                  setIsLoading(false);
-                }
-              }}
+              style={styles.compactUploadOption}
+              onPress={handleStartVoiceRecording}
               activeOpacity={0.8}>
-              <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.uploadGradient}>
-                <View style={styles.uploadIconCircle}>
-                  <IconEdit size={24} color="#ffffff" />
+              <LinearGradient colors={['#EF4444', '#DC2626']} style={styles.compactUploadGradient}>
+                <View style={styles.compactIconCircle}>
+                  <IconMicrophone size={20} color="#ffffff" />
                 </View>
-                <Text style={styles.uploadOptionText}>Enter Manually</Text>
+                <Text style={styles.compactUploadText}>Voice</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -2336,25 +2318,25 @@ function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FC',
+    backgroundColor: '#F5F7FA',
   },
   content: {
     flex: 1,
   },
   header: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(229, 231, 235, 0.4)',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 8,
+    borderBottomColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   headerContent: {
     flexDirection: 'row',
@@ -2364,29 +2346,29 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   appIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerTextContainer: {
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#111827',
-    letterSpacing: -0.5,
+    fontSize: 19,
+    fontWeight: '700',
+    color: '#1F2937',
+    letterSpacing: -0.4,
   },
   headerSubtitle: {
-    fontSize: 12,
-    color: '#6B7280',
+    fontSize: 11,
+    color: '#9CA3AF',
     marginTop: 2,
     fontWeight: '500',
   },
@@ -2488,19 +2470,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderRadius: 24,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
     padding: 24,
-    marginBottom: 20,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 12,
+    marginBottom: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.08)',
-    position: 'relative',
-    overflow: 'hidden',
+    borderColor: 'rgba(0, 0, 0, 0.04)',
   },
   cardSuccess: {
     borderLeftWidth: 4,
@@ -2512,54 +2492,126 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
+    fontWeight: '600',
+    color: '#1F2937',
     marginBottom: 4,
+    letterSpacing: -0.3,
   },
   cardSubtitle: {
     fontSize: 13,
-    color: '#6B7280',
-    marginBottom: 16,
+    color: '#9CA3AF',
+    marginBottom: 20,
+    fontWeight: '400',
   },
   uploadGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
   },
-  demoButton: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 20,
-    shadowColor: '#F59E0B',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+  compactUploadGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
   },
-  demoGradient: {
-    paddingVertical: 16,
+  compactUploadOption: {
+    flex: 1,
+    marginHorizontal: 4,
+    borderRadius: 10,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  compactUploadGradient: {
+    paddingVertical: 14,
+    paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  demoButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
+  compactIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  compactUploadText: {
+    fontSize: 11,
+    fontWeight: '600',
     color: '#ffffff',
-    letterSpacing: 0.3,
+    textAlign: 'center',
+  },
+  statsOverview: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  statBox: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    fontWeight: '500',
+  },
+  demoButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 20,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  demoGradient: {
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3B82F6',
+  },
+  demoButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+    letterSpacing: 0.2,
   },
   uploadOption: {
     flex: 1,
     marginHorizontal: 6,
-    borderRadius: 20,
+    borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
   },
   uploadGradient: {
-    padding: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 120,
@@ -2572,12 +2624,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   uploadIconText: {
     fontSize: 24,
@@ -2585,24 +2634,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   uploadOptionText: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '700',
     textAlign: 'center',
-    letterSpacing: 0.5,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    letterSpacing: 0.2,
   },
   uploadShine: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    height: '40%',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
   documentItem: {
     flexDirection: 'row',
@@ -3919,7 +3965,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 6,
   },
-  statLabel: {
+  statsStatLabel: {
     fontSize: 11,
     fontWeight: '700',
     color: '#374151',
