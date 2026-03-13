@@ -1,37 +1,22 @@
 # 🏥 NutriCare-Oracle
 
-**Privacy-Preserving Medical Locker with On-Device AI + Blockchain Integrity**
+**Privacy-Preserving Medical Locker with On-Device AI + Medical Integrity**
 
-A hackathon-ready mobile application that combines:
+A  mobile application that combines:
 - 🧠 **On-Device AI**: MedGemma-1.5-4b-it via Melange Framework
 - 🔒 **Privacy-First**: Local PII redaction before any processing
 - 🔗 **Blockchain Integrity**: Polygon Layer 2 for tamper-proof verification
 - 📱 **Cross-Platform**: React Native for Android & iOS
 
-## 🎯 Hackathon Judging Criteria
 
 ✅ **Use of On-Device AI**: Melange framework with MedGemma for NPU-accelerated inference  
 ✅ **Technical Implementation**: Privacy layer + AI + Blockchain integration  
 ✅ **Creativity**: Novel combination of medical AI with blockchain integrity  
 ✅ **Demo Clarity**: Clear 3-tab interface showing the complete workflow  
 
-## 🚀 Quick Start (8-Hour Hackathon Timeline)
+## 🚀 Quick Start 
 
-### Prerequisites
-
-- Node.js 18+ installed
-- React Native development environment set up
-- **Melange Pro+ Account** (you have this!)
-- Polygon Amoy testnet wallet (for blockchain demo)
-
-### Step 1: Install Dependencies (15 mins)
-
-```bash
-cd NutriCareOracle
-npm install
-```
-
-### Step 2: Deploy MedGemma to Melange (30 mins)
+### Step 1: Deploy MedGemma to Melange (30 mins)
 
 **CRITICAL: This is your core AI engine!**
 
@@ -41,7 +26,6 @@ npm install
    - Navigate to "Deploy Your Model"
    - Model source: Hugging Face
    - Model name: `google/medgemma-1.5-4b-it`
-   - Or upload the quantized version: `unsloth/medgemma-1.5-4b-it-bnb-4bit`
    - Click "Upload & Auto-Compile"
 
 3. **Get Your Keys**:
@@ -58,7 +42,7 @@ npm install
      modelKey: 'YOUR_MEDGEMMA_MODEL_KEY',       // From dashboard
      ```
 
-### Step 3: Integrate Melange Native SDK (1 hour)
+### Step 3: Integrate Melange Native SDK
 
 #### For Android:
 
@@ -182,20 +166,10 @@ npm install
    private readonly CONTRACT_ADDRESS = '0xYOUR_DEPLOYED_CONTRACT_ADDRESS';
    ```
 
-### Step 5: Run the App (5 mins)
+### Step 5: Run the App
 
-#### Android:
-```bash
-npm run android
-```
 
-#### iOS:
-```bash
-cd ios && pod install && cd ..
-npm run ios
-```
-
-## 📱 Demo Workflow (For Judges)
+## 📱 Demo Workflow
 
 ### Tab 1: 📋 Scan
 1. Paste sample medical report with PII
@@ -215,27 +189,11 @@ npm run ios
 3. **Show**: Timestamp and transaction details
 4. **Explain**: No sensitive data on blockchain, only hashes
 
-## 🎬 Demo Script (5 minutes)
-
-**Opening (30 sec)**:
-"NutriCare-Oracle solves the problem of fragmented medical records for pregnant women and chronic illness patients. We combine on-device AI with blockchain integrity."
-
-**Privacy Demo (1 min)**:
-"Watch as we scan a medical report. Notice how PII is redacted locally before any processing. Names, addresses, IDs - all anonymized on-device."
-
-**AI Demo (2 min)**:
-"Now MedGemma analyzes the data using Melange's NPU acceleration. The entire 4B parameter model runs on your phone. No cloud, no latency, complete privacy. See these insights? Generated in under 2 seconds."
-
-**Blockchain Demo (1 min)**:
-"Finally, we anchor a cryptographic hash to Polygon Layer 2. This proves data integrity without exposing sensitive information. Perfect for insurance claims and medical audits."
-
-**Closing (30 sec)**:
-"Three innovations in one app: Privacy-preserving AI, on-device inference via Melange, and blockchain integrity. All in a mobile-first package."
 
 ## 🏗️ Architecture
 
 ```
-Camera/Input → Privacy Layer → Melange/MedGemma → Local Storage → Blockchain Anchor
+Camera/Input → Privacy Layer → Melange/MedGemma/LLama Vision/Whisper → Local Storage → Blockchain Anchor
      ↓              ↓                ↓                  ↓              ↓
   Medical      PII Redaction    AI Inference      Encryption      Hash Storage
    Report      (Local Only)    (On-Device NPU)   (AES-256)      (Polygon L2)
@@ -245,31 +203,9 @@ Camera/Input → Privacy Layer → Melange/MedGemma → Local Storage → Blockc
 
 1. **Melange Integration**: Automated NPU utilization for 4B parameter model
 2. **Privacy-First**: Multi-layer PII detection before any processing
-3. **Blockchain Anchoring**: Lightweight integrity verification without data exposure
+3. **Documents Anchoring**: Lightweight integrity verification without data exposure
 4. **Mobile-Optimized**: Thermal management and memory optimization
 
-## 📊 Performance Targets
-
-- Model loading: <5 seconds
-- Inference time: <2 seconds per query
-- Memory usage: <2GB
-- Battery impact: Minimal (NPU is power-efficient)
-
-## 🐛 Troubleshooting
-
-### Melange Model Not Loading
-- Verify your Personal Key and Model Key are correct
-- Check Melange Dashboard for model compilation status
-- Ensure model is deployed for your target platform (Android/iOS)
-
-### NPU Not Detected
-- Melange automatically falls back to GPU/CPU
-- Check hardware info in app to see detected capabilities
-
-### Blockchain Connection Failed
-- App works offline! Hashes stored locally and synced later
-- Verify Polygon Amoy RPC is accessible
-- Check wallet has testnet MATIC for gas
 
 ## 📚 Resources
 
