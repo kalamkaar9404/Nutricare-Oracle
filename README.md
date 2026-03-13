@@ -24,7 +24,7 @@ A  mobile application that combines:
 | **OpenAI/whisper-tiny-encoder** | Audio feature extraction (Speech-to-Text) | `MelangeModule.kt`, `WhisperService.ts`, `App.tsx` (Voice tab) |
 | **OpenAI/whisper-tiny-decoder** | Text generation from audio features | `MelangeModule.kt`, `WhisperService.ts`, `App.tsx` (Voice tab) |
 
-## Quick Start 
+## Implementation Roadmap
 
 ### Step 1: Deploy MedGemma to Melange
 
