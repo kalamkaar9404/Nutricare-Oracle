@@ -14,6 +14,16 @@ A  mobile application that combines:
 **Creativity**: Novel combination of medical AI with blockchain integrity  
 **Demo Clarity**: Clear 3-tab interface showing the complete workflow  
 
+# Melange AI Models - Implementation Summary
+
+## Models Integrated
+
+| Model | Purpose | Where Used |
+| :--- | :--- | :--- |
+| **google/medgemma-1.5-4b-it** | Medical LLM for health and nutritional insights | `MelangeModule.kt`, `MelangeService.ts`, `App.tsx` (Insights tab) |
+| **OpenAI/whisper-tiny-encoder** | Audio feature extraction (Speech-to-Text) | `MelangeModule.kt`, `WhisperService.ts`, `App.tsx` (Voice tab) |
+| **OpenAI/whisper-tiny-decoder** | Text generation from audio features | `MelangeModule.kt`, `WhisperService.ts`, `App.tsx` (Voice tab) |
+
 ## Quick Start 
 
 ### Step 1: Deploy MedGemma to Melange
